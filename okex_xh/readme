@@ -1,0 +1,13 @@
+首先进入目录下
+pushd D:\YANYAN\project_test\okex_websocket\Scripts
+分别执行
+python D:\YANYAN\project_test\okex_websocket\okex_xh\okex_webs_depth.py
+python D:\YANYAN\project_test\okex_websocket\okex_xh\okex_webs_kline.py
+python D:\YANYAN\project_test\okex_websocket\okex_xh\okex_webs_ticker.py
+python D:\YANYAN\project_test\okex_websocket\okex_xh\okex_webs_trades.py
+
+python D:\YANYAN\project_test\okex_websocket\okex_xh\okex_web_future_depth.py
+python D:\YANYAN\project_test\okex_websocket\okex_xh\okex_web_future_kline.py
+python D:\YANYAN\project_test\okex_websocket\okex_xh\okex_web_future_ticker.py
+python D:\YANYAN\project_test\okex_websocket\okex_xh\okex_web_future_trades.py
+
