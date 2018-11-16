@@ -6,6 +6,7 @@ monkey.patch_all()
 import gevent
 import time
 
+
 def run_task():
     # symbol = ['btc_usd','bch_usd','eth_usd','ltc_usd','eos_usd']
     # contractType = ['this_week','next_week','quarter']
@@ -30,6 +31,8 @@ def run_task():
         gevent.joinall(greenlets)
     except Exception as e:
         print(e)
+
+
 # 循环
 def start():
     while True:
@@ -40,6 +43,7 @@ def start():
         except Exception as e:
             print('掉了等5秒')
             time.sleep(5)
+
 
 if __name__ == '__main__':
     start()

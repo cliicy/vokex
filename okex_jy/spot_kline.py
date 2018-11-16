@@ -16,6 +16,7 @@ import datetime
 from common.enums import *
 from okex_xh.sender2 import MqSender
 from config import config
+from common.becash_funs import kline2db
 
 
 class spot_kline_download(object):
@@ -87,6 +88,8 @@ class spot_kline_download(object):
                 result["vol"] = i[5]
                 result["count"] = ""
                 writer.writerow(result.values())
+                # 写入实时数据到Mongodb 用于becash
+                kline2db(result, 'spot')
         f.close()
 
     # #循环
@@ -99,6 +102,7 @@ class spot_kline_download(object):
     #         except Exception as e:
     #             print('掉了等5秒')
     #             time.sleep(5)
+
 
 if __name__ == '__main__':
     spot_kline_download("btc_usdt").download()

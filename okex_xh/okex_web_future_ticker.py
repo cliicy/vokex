@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 import time
 import re
-from common.enums import PlatformDataType, Platform
 import os
 import csv
 from okex_xh.synchronizer import BaseSynchronizer
 from common.enums import *
 from config.config import websocket_future_compress_url
+from common.becash_funs import ticker2db
 
 
 class OkexFutureTickerSynchronizer(BaseSynchronizer):
@@ -55,9 +55,11 @@ class OkexFutureTickerSynchronizer(BaseSynchronizer):
         # 内容
         # 解析获得文件的格式
         result = {}
-        sym = re.match('.*_future(.*)_ticker.*', evt['channel']).group(1)
+        smatch = re.match('.*_future(.*)_ticker_(.*)', evt['channel'])
+        sym = smatch.group(1)
+        future_type = smatch.group(2)
         symbol_get = '_'.join(sym.split('_')[::-1])
-
+        print('okex合约：', evt)
         symbol = Symbol.convert_to_standard_symbol(Platform.PLATFORM_OKEX_FUTURE, symbol_get)
         result['symbol'] = symbol
         result['ts'] = int(time.time() * 1000)
@@ -67,7 +69,7 @@ class OkexFutureTickerSynchronizer(BaseSynchronizer):
         result['max_buy1_amt'] = ''
         result['min_sell1_price'] = evt['data']['sell']
         result['min_sell1_amt'] = ''
-        result['pre_24h_price'] = ''
+        result['pre_24h_price'] = evt['data']['high']
         result['pre_24h_price_max'] = evt['data']['high']
         result['pre_24h_price_min'] = evt['data']['low']
         result['pre_24h_bt_finish_amt'] = evt['data']['vol']
@@ -77,7 +79,8 @@ class OkexFutureTickerSynchronizer(BaseSynchronizer):
         result['unitAmount'] = evt['data']['unitAmount']
         result['hold_amount'] = evt['data']['hold_amount']
         result['contractId'] = evt['data']['contractId']
-        result['contractType'] = re.match('.*_ticker_(.*)', evt['channel']).group(1)
+        result['contractType'] = future_type
+        ticker2db(result, 'okex_future', future_type)
         # 判断文件是否存在，如果存在则直接写入数据，如果不存在则创建文件
         if os.path.exists(file_name):
             with open(file_name, 'a+', encoding='utf-8', newline='') as f:

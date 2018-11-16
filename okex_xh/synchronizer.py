@@ -8,7 +8,6 @@ from config import config
 import zlib
 
 
-
 class BaseSynchronizer(object):
     url = ''  # if okcoin.cn  change url wss://real.okcoin.cn:10440/websocket/okcoinapi
     data_type = ""
@@ -18,6 +17,12 @@ class BaseSynchronizer(object):
         self.url = url
         self.data_type = data_type
         self.platform = platform
+        self._sender = None
+        try:
+            self._sender = MqSender(self.platform, self.data_type)
+        except Exception as e:
+            print('ohhh== ERROR= ', e)
+            self._sender = None
 
     def download(self, rdata):
         pass
@@ -28,20 +33,25 @@ class BaseSynchronizer(object):
     def on_message(self, app, evt):
         # 将数据格式调整为字典格式
         # 用json转换成列表格式
-        # print(evt)
+        print('hahha=====', evt)
         evt = self.inflate(evt)
         # 下面是自己的转换
         data = json.loads(evt)
         rdata = data[0]
-        try:
-            if rdata['channel'] == 'addChannel':
-                pass
+
+        if rdata['channel'] == 'addChannel':
+            pass
+        else:
+            if self._sender is not None:
+                # pass
+                try:
+                    self._sender.send(evt)
+                except Exception as error:
+                    print(error)
+                    self._sender.close()
             else:
-                # 调用mq
-                sender = MqSender(self.platform, self.data_type)
-                sender.send(evt)
-        except Exception as e:
-            print('MQ报错')
+                print('MQ报错: fail to connect rabbitmq server')
+                pass
         self.download(rdata)
 
     def on_error(self, app, evt):

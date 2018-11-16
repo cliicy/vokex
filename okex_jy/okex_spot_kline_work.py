@@ -22,6 +22,7 @@ def run_task():
         gevent.joinall(greenlets)
     except Exception as e:
         print(e)
+
 # 循环
 def start():
     while True:
@@ -32,6 +33,7 @@ def start():
         except Exception as e:
             print('掉了等5秒')
             time.sleep(5)
+
 
 if __name__ == '__main__':
     start()

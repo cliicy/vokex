@@ -39,9 +39,6 @@ class OK_download(object):
             os.makedirs(self.path_txt)
 
 
-
-
-
     # 连接网址获取数据
     def download(self,sym):
         # 现货API，连接
@@ -69,14 +66,11 @@ class OK_download(object):
         result['max_buy1_amt'] = ''
         result['min_sell1_price'] = rs_json['ticker']['sell']
         result['min_sell1_amt'] = ''
-        result['pre_24h_price'] = ''
+        result['pre_24h_price'] = rs_json['ticker']['open_24h']
         result['pre_24h_price_max'] = rs_json['ticker']['high']
         result['pre_24h_price_min'] = rs_json['ticker']['low']
         result['pre_24h_bt_finish_amt'] = rs_json['ticker']['vol']
         result['pre_24h_usd_finish_amt'] = ''
-
-
-
         return result
 
     # 每天创建一个csv
@@ -109,6 +103,8 @@ class OK_download(object):
             except Exception as e:
                 print('掉了等5秒')
                 time.sleep(5)
+
+
 if __name__ == '__main__':
     OK = OK_download()
     OK.sym = sys.argv[1]

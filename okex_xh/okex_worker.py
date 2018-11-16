@@ -16,12 +16,12 @@ import gevent
 def run_task():
     try:
         greenlets = [
-            gevent.spawn(OkexDepthSynchronizer().run),
-            gevent.spawn(OkexTradesSynchronizer().run),
-            gevent.spawn(OkextickerSynchronizer().run),
+            # gevent.spawn(OkexDepthSynchronizer().run),
+            # gevent.spawn(OkexTradesSynchronizer().run),
+            # gevent.spawn(OkextickerSynchronizer().run),
             gevent.spawn(OkexFutureTickerSynchronizer().run),
-            gevent.spawn(OkexFutureTradesSynchronizer().run),
-            gevent.spawn(OkexFutureDepthSynchronizer().run),
+            # gevent.spawn(OkexFutureTradesSynchronizer().run),
+            # gevent.spawn(OkexFutureDepthSynchronizer().run),
             # gevent.spawn(spot_kline_download("btc_usdt").download()),
             # gevent.spawn(spot_kline_download("bch_usdt").download()),
             # gevent.spawn(spot_kline_download("eth_usdt").download()),

@@ -6,6 +6,8 @@ import operator
 from okex_xh.synchronizer import BaseSynchronizer
 from common.enums import *
 from config.config import websocket_spot_compress_url
+from common.becash_funs import ticker2db
+
 
 class OkextickerSynchronizer(BaseSynchronizer):
     """
@@ -39,6 +41,7 @@ class OkextickerSynchronizer(BaseSynchronizer):
         :param file_date_zh:格式化日期
         :return:
         """
+        print('okex现货：', evt)
         headers = {'symbol', 'ts', 'latest_price', 'latest_amount', 'max_buy1_price', 'max_buy1_amt', 'min_sell1_price',
                    'min_sell1_amt', 'pre_24h_price', 'pre_24h_price_max', 'pre_24h_price_min', 'pre_24h_bt_finish_amt',
                    'pre_24h_usd_finish_amt'}
@@ -55,12 +58,12 @@ class OkextickerSynchronizer(BaseSynchronizer):
         result['max_buy1_amt'] = ''
         result['min_sell1_price'] = evt['data']['sell']
         result['min_sell1_amt'] = ''
-        result['pre_24h_price'] = ''
-        result['pre_24h_price_max'] = evt['data']['high']
-        result['pre_24h_price_min'] = evt['data']['low']
+        result['pre_24h_price'] = evt['data']['open_24h']
+        result['pre_24h_price_max'] = evt['data']['dayHigh']
+        result['pre_24h_price_min'] = evt['data']['dayLow']
         result['pre_24h_bt_finish_amt'] = evt['data']['vol']
-        result['pre_24h_usd_finish_amt'] = ''
-        print(result)
+        result['pre_24h_usd_finish_amt'] = evt['data']['base_volume_24h']
+        # print(result)
         # 判断文件是否存在，如果存在则直接写入数据，如果不存在则创建文件
         if os.path.exists(file_name):
             with open(file_name, 'a+', encoding='utf-8', newline='') as f:
@@ -73,7 +76,34 @@ class OkextickerSynchronizer(BaseSynchronizer):
                 writer.writerow(result.keys())
                 writer.writerow(result.values())
             f.close()
+        # 人民币价格
+        # 24h最高价 24h成交量 24h最低价
+        result['open'] = evt['data']['open']
+        result['high'] = evt['data']['high']
+        result['low'] = evt['data']['low']
+        result['change'] = evt['data']['change']
+        result['vol'] = evt['data']['vol']
+        result['close'] = evt['data']['close']
+        ticker2db(result, 'okex_spot', 'spot')
+
+
 # OkextickerSynchronizer-------
 if __name__ == '__main__':
-    OkextickerSynchronizer().run()
+    pass
+    # result = {}
+    # result['symbol'] = 'aaa'
+    # result['ts'] = '111111'
+    # result['latest_price'] = 168
+    # result['latest_amount'] = '8'
+    # result['max_buy1_price'] = 188
+    # result['max_buy1_amt'] = '8'
+    # result['min_sell1_price'] = 188
+    # result['min_sell1_amt'] = '8'
+    # result['pre_24h_price'] = '1688'
+    # result['pre_24h_price_max'] = 188
+    # result['pre_24h_price_min'] = 188
+    # result['pre_24h_bt_finish_amt'] = 199
+    # result['pre_24h_usd_finish_amt'] = 1990
+    # ticker2db(result, 'okex_spot')
+    # OkextickerSynchronizer().run()
 

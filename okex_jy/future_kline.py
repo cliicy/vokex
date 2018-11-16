@@ -8,13 +8,13 @@ import time
 import os
 import csv
 import json
-import sys
-from threading import Thread
+# import sys
+# from threading import Thread
 import datetime
 from okex_xh.sender import MqSender
 from common.enums import *
 from config import config
-
+from common.becash_funs import kline2db
 
 
 class future_kline_download(object):
@@ -28,6 +28,7 @@ class future_kline_download(object):
         self.okcoinRESTURL = config.okcoinRESTURL
         self.sym = sym
         self.contractType = contractType
+
     # 连接网址获取数据
     def download(self):
         sym = self.sym
@@ -43,7 +44,6 @@ class future_kline_download(object):
         dir_path, os.sep, PlatformDataType.PLATFORM_DATA_KLINE.value, sym,contractType, today_date)
         csv_file_name = '%s%s%s_%s_%s_%s.csv' % (
         dir_path, os.sep, PlatformDataType.PLATFORM_DATA_KLINE.value, sym,contractType, today_date)
-
 
         symbol = Symbol.convert_to_standard_symbol(Platform.PLATFORM_OKEX_FUTURE, sym)
         # 昨天时间的文件夹
@@ -109,6 +109,8 @@ class future_kline_download(object):
                         result['count'] = i[5]
                         result['contractType'] = contractType
                         writer.writerow(result.values())
+                        # 写入实时数据到Mongodb 用于becash
+                        kline2db(result, 'okex_future')
                 f.close()
 
         rs_bch_usdt = okcoinFuture.future_kline(sym, contractType, ts)
@@ -146,7 +148,10 @@ class future_kline_download(object):
                 result['count'] = i[5]
                 result['contractType'] = contractType
                 writer.writerow(result.values())
+                # 写入实时数据到Mongodb 用于becash
+                kline2db(result, 'future')
         f.close()
+
 
 if __name__ == '__main__':
     future_kline_download("btc_usd", "quarter").download()
