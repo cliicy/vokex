@@ -1,0 +1,11 @@
+.idea
+venv/*
+/bin/tk.csv
+*.log
+common/__pycache__
+conf/__pycache__
+okex_jy/__pycache__
+okex_xh/__pycache__
+okex_xh/data
+okex_xh/websocket/__pycache__
+okex_xh/websocket/tests
