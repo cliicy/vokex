@@ -36,7 +36,7 @@ neo4j-driver==1.6.0
 neotime==1.0.0
 numpy==1.14.5
 pandas==0.23.1
-paramiko==2.4.1
+paramiko==2.10.1
 pika==0.12.0
 pyasn1==0.4.3
 pyasn1-modules==0.2.2
